@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bbsMapper">
+
+	<insert id="insert" parameterType="bbsDTO">
+	<selectKey keyProperty="bId" resultType="int" order="BEFORE">
+	select max(bId)+1 from mvc_board
+	</selectKey>
+	insert into mvc_board (bId,bName, bTitle, bContent,bHit, bGroup, bStep, bIndent) 
+	values (#{bId},#{bName},#{bTitle},#{bContent},0 ,#{bId}, 0, 0)
+	</insert>
+	<!-- 게시판에 입력시 bId 값에 +1 을 한후에 그값을 bGroup에 입력하여 같은 그룹 짓기  -->
+<!-- bId 게시글의 pk,  bName 작성자 ,  bGroup은 글 그룹 번호 , bStep 원글에서 몇번째 위치 할 것이냐,  bIndent 원글에서 들여 쓰기  -->
+<!--https://yookeun.github.io/java/2014/07/11/mybatis-selectkey/ select key참고사이트  -->
+	
+	<insert id="replyinsert" parameterType="bbsDTO">
+	insert into mvc_board (bId, bName, bTitle, bContent, bGroup, bStep, bIndent) 
+	values((select *from (select max(bId)+1 from mvc_board) next), #{bName}, #{bTitle}, #{bContent}, #{bGroup}, #{bStep} +1, #{bIndent}+1)
+	</insert>
+	<!-- 현재 작성하고자 하는 덧글 외 이전 덧글을 모두 한칸 씩 아래로 민다.  -->
+	<!--seq.nextval >   -->
+
+	<select id="select"  resultType="bbsDTO">
+	 select * from mvc_board order by bGroup DESC, bStep ASC
+	</select>
+	<!-- DESC(내림차순) ASC(오름차순)  order by bGroup DESC, bStep ASC  -->
+	
+	<select id="selectone" resultType="bbsDTO" parameterType="bbsDTO">
+	 select * from mvc_board where bId = #{bId}
+	</select>
+	
+	<update id="update" parameterType="bbsDTO">
+	 update mvc_board set bName = #{bName} , bTitle = #{bTitle}, bContent = #{bContent} where bId = #{bId}
+	</update>
+	
+	<update id="uphit" parameterType="bbsDTO">
+	update mvc_board set bHit = bHit + 1 where bId = #{bId}
+	</update>
+	
+	<update id="shape" parameterType="bbsDTO">
+	update mvc_board set bStep = bStep + 1 where bGroup = #{bGroup} and bStep > #{bStep}
+	</update>
+	<!-- and 모두가 참이면  -->
+	<!-- 최신 댓글을 기존 댓글보다 상위에 위치해야 하므로, 같은 그룹 넘버(같은 원글을 가진 덧글) 이고, 현재 입력하고자 하는 글보다 스텝이 높은 글들(이전글)의 스텝을 하나씩 증가 
+	  -->
+	<delete id="delete" parameterType="bbsDTO">
+		delete from mvc_board where bId = #{bId}
+	</delete>
+	
+
+</mapper>
