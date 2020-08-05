@@ -2,6 +2,8 @@ package com.mega.erp.dto;
 
 import java.util.Date;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class BbsDTO {
 	int bId;
 	String bName;
@@ -12,6 +14,22 @@ public class BbsDTO {
 	int bGroup;
 	int bStep;
 	int bIndent;
+	private String bFileName;
+	private MultipartFile uploadFile;
+	
+
+	public String getbFileName() {
+		return bFileName;
+	}
+	public void setbFileName(String bFileName) {
+		this.bFileName = bFileName;
+	}
+	public MultipartFile getUploadFile() {
+		return uploadFile;
+	}
+	public void setUploadFile(MultipartFile uploadFile) {
+		this.uploadFile = uploadFile;
+	}
 	public int getbId() {
 		return bId;
 	}
@@ -69,8 +87,10 @@ public class BbsDTO {
 	@Override
 	public String toString() {
 		return "BbsDTO [bId=" + bId + ", bName=" + bName + ", bTitle=" + bTitle + ", bContent=" + bContent + ", bDate="
-				+ bDate + ", bHit=" + bHit + ", bGroup=" + bGroup + ", bStep=" + bStep + ", bIndent=" + bIndent + "]";
+				+ bDate + ", bHit=" + bHit + ", bGroup=" + bGroup + ", bStep=" + bStep + ", bIndent=" + bIndent
+				+ ", bFileName=" + bFileName + ", uploadFile=" + uploadFile + "]";
 	}
+
 
 
 }
